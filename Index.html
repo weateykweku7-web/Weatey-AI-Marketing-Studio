@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weatey AI Marketing Studio</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- AUTHENTICATION OVERLAY -->
+    <div id="auth-modal" class="auth-overlay">
+        <div class="auth-card card">
+            <div class="logo-area auth-logo">
+                <i class="fa-solid fa-wand-magic-sparkles logo-icon"></i>
+                <h2>Weatey AI Studio</h2>
+            </div>
+            
+            <!-- Tab switches for Sign In / Sign Up -->
+            <div class="auth-tabs">
+                <button class="auth-tab-btn active" onclick="switchAuthTab('signin')">Sign In</button>
+                <button class="auth-tab-btn" onclick="switchAuthTab('signup')">Register</button>
+            </div>
+
+            <!-- Sign In Form -->
+            <form id="signin-form" class="auth-form" onsubmit="handleSignIn(event)">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="signin-email" required placeholder="name@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signin-password" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn-primary">Sign In</button>
+                <p class="auth-hint">Admin demo login: <strong>admin@weatey.com</strong> / <strong>admin123</strong></p>
+            </form>
+
+            <!-- Sign Up Form -->
+            <form id="signup-form" class="auth-form" style="display: none;" onsubmit="handleSignUp(event)">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="signup-name" required placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="signup-email" required placeholder="name@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signup-password" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn-primary">Create Account</button>
+                <p class="auth-note">Accounts require admin approval. You can also request instant approval via WhatsApp.</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN APP CONTAINER -->
+    <div id="app-container" class="app-container" style="display: none;">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <i class="fa-solid fa-wand-magic-sparkles logo-icon"></i>
+                <h2>Weatey AI</h2>
+                <span class="badge" id="user-role-badge">User</span>
+            </div>
+            <nav class="nav-menu">
+                <button class="nav-item active" data-tab="dashboard">
+                    <i class="fa-solid fa-house"></i> Dashboard
+                </button>
+                <button class="nav-item" data-tab="adcopy">
+                    <i class="fa-solid fa-rectangle-ad"></i> Ad Copy Generator
+                </button>
+                <button class="nav-item" data-tab="social">
+                    <i class="fa-solid fa-share-nodes"></i> Social Captions
+                </button>
+                <button class="nav-item" data-tab="email">
+                    <i class="fa-solid fa-envelope-open-text"></i> Email Campaign
+                </button>
+                <button class="nav-item" data-tab="seo">
+                    <i class="fa-solid fa-magnifying-glass-chart"></i> SEO & Blog
+                </button>
+                <button class="nav-item" data-tab="history">
+                    <i class="fa-solid fa-clock-rotate-left"></i> Saved History
+                </button>
+                <!-- Admin Portal Tab (Hidden by default unless admin) -->
+                <button class="nav-item admin-only" id="nav-admin" data-tab="admin" style="display: none;">
+                    <i class="fa-solid fa-shield-halved"></i> Admin Approvals
+                </button>
+                <button class="nav-item" data-tab="settings">
+                    <i class="fa-solid fa-gear"></i> Settings & Account
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-credits">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>Credits: <strong id="credits-count">Unlimited</strong></span>
+                </div>
+                <button class="btn-logout" onclick="logoutUser()"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-header">
+                <div class="header-title">
+                    <h1 id="page-title">Dashboard Overview</h1>
+                    <p>Supercharge your marketing workflow with AI-powered content generation.</p>
+                </div>
+                <div class="header-actions">
+                    <div class="search-bar">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" placeholder="Search templates...">
+                    </div>
+                    <div class="profile-avatar">
+                        <img id="header-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces" alt="Profile">
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Tab -->
+            <section id="dashboard" class="tab-content active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon purple"><i class="fa-solid fa-file-lines"></i></div>
+                        <div class="stat-info">
+                            <h3>Generated Assets</h3>
+                            <p id="stat-total">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon blue"><i class="fa-solid fa-fire"></i></div>
+                        <div class="stat-info">
+                            <h3>Active Tools</h3>
+                            <p>4 AI Modules</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="fa-solid fa-gauge-high"></i></div>
+                        <div class="stat-info">
+                            <h3>System Status</h3>
+                            <p class="status-online"><span class="dot"></span> Operational</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h2>Quick Launch AI Tools</h2>
+                    <p>Select a tool below to start creating high-converting marketing content.</p>
+                </div>
+
+                <div class="tools-grid">
+                    <div class="tool-card" onclick="switchTab('adcopy')">
+                        <div class="tool-icon purple"><i class="fa-solid fa-rectangle-ad"></i></div>
+                        <h3>Ad Copy Generator</h3>
+                        <p>Create high-converting ad copy for Facebook, Instagram, Google, and TikTok.</p>
+                        <span class="launch-link">Launch Tool <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                    <div class="tool-card" onclick="switchTab('social')">
+                        <div class="tool-icon blue"><i class="fa-solid fa-share-nodes"></i></div>
+                        <h3>Social Media Captions</h3>
+                        <p>Generate engaging posts with targeted hashtags for maximum reach.</p>
+                        <span class="launch-link">Launch Tool <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                    <div class="tool-card" onclick="switchTab('email')">
+                        <div class="tool-icon orange"><i class="fa-solid fa-envelope-open-text"></i></div>
+                        <h3>Email Campaigns</h3>
+                        <p>Write compelling newsletters, welcome sequences, and cold outreach.</p>
+                        <span class="launch-link">Launch Tool <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                    <div class="tool-card" onclick="switchTab('seo')">
+                        <div class="tool-icon green"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+                        <h3>SEO Blog Outlines</h3>
+                        <p>Plan out SEO-optimized blog posts, catchy titles, and meta descriptions.</p>
+                        <span class="launch-link">Launch Tool <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Ad Copy Tab -->
+            <section id="adcopy" class="tab-content">
+                <div class="generator-layout">
+                    <div class="generator-form card">
+                        <h2><i class="fa-solid fa-rectangle-ad"></i> Ad Copy Generator</h2>
+                        <div class="form-group">
+                            <label>Product / Brand Name</label>
+                            <input type="text" id="ad-product" placeholder="e.g., Weatey Analytics">
+                        </div>
+                        <div class="form-group">
+                            <label>Key Features & Benefits</label>
+                            <textarea id="ad-features" rows="3" placeholder="e.g., Real-time tracking, 50% faster insights..."></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Target Audience</label>
+                                <input type="text" id="ad-audience" placeholder="e.g., Startup Founders">
+                            </div>
+                            <div class="form-group">
+                                <label>Tone of Voice</label>
+                                <select id="ad-tone">
+                                    <option value="Persuasive">Persuasive & Bold</option>
+                                    <option value="Professional">Professional & Clean</option>
+                                    <option value="Casual">Casual & Friendly</option>
+                                    <option value="Urgent">Urgent & FOMO</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn-primary" onclick="generateContent('adcopy')">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Ad Copy
+                        </button>
+                    </div>
+                    <div class="generator-result card">
+                        <div class="result-header">
+                            <h3>Generated Output</h3>
+                            <button class="btn-secondary" onclick="copyResult('ad-output')"><i class="fa-solid fa-copy"></i> Copy</button>
+                        </div>
+                        <div id="ad-output" class="output-box placeholder">Your generated ad copy will appear here...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Social Media Tab -->
+            <section id="social" class="tab-content">
+                <div class="generator-layout">
+                    <div class="generator-form card">
+                        <h2><i class="fa-solid fa-share-nodes"></i> Social Media Captions</h2>
+                        <div class="form-group">
+                            <label>Post Topic / Subject</label>
+                            <input type="text" id="social-topic" placeholder="e.g., Launching our new mobile app">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Platform</label>
+                                <select id="social-platform">
+                                    <option value="Instagram">Instagram</option>
+                                    <option value="LinkedIn">LinkedIn</option>
+                                    <option value="Twitter/X">Twitter / X</option>
+                                    <option value="TikTok">TikTok</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Tone</label>
+                                <select id="social-tone">
+                                    <option value="Engaging">Engaging & Interactive</option>
+                                    <option value="Inspirational">Inspirational</option>
+                                    <option value="Humorous">Humorous & Witty</option>
+                                    <option value="Educational">Educational</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn-primary" onclick="generateContent('social')">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Caption
+                        </button>
+                    </div>
+                    <div class="generator-result card">
+                        <div class="result-header">
+                            <h3>Generated Output</h3>
+                            <button class="btn-secondary" onclick="copyResult('social-output')"><i class="fa-solid fa-copy"></i> Copy</button>
+                        </div>
+                        <div id="social-output" class="output-box placeholder">Your generated social media caption will appear here...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Email Campaign Tab -->
+            <section id="email" class="tab-content">
+                <div class="generator-layout">
+                    <div class="generator-form card">
+                        <h2><i class="fa-solid fa-envelope-open-text"></i> Email Campaign Generator</h2>
+                        <div class="form-group">
+                            <label>Email Objective</label>
+                            <input type="text" id="email-objective" placeholder="e.g., Black Friday 50% Off Sale">
+                        </div>
+                        <div class="form-group">
+                            <label>Offer / Details</label>
+                            <textarea id="email-details" rows="3" placeholder="e.g., Use code SAVE50 at checkout."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Campaign Type</label>
+                            <select id="email-type">
+                                <option value="Promotional Blast">Promotional Blast</option>
+                                <option value="Welcome Sequence">Welcome Sequence</option>
+                                <option value="Cold Outreach">Cold Outreach</option>
+                                <option value="Newsletter">Newsletter Update</option>
+                            </select>
+                        </div>
+                        <button class="btn-primary" onclick="generateContent('email')">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Email
+                        </button>
+                    </div>
+                    <div class="generator-result card">
+                        <div class="result-header">
+                            <h3>Generated Output</h3>
+                            <button class="btn-secondary" onclick="copyResult('email-output')"><i class="fa-solid fa-copy"></i> Copy</button>
+                        </div>
+                        <div id="email-output" class="output-box placeholder">Your generated email campaign will appear here...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEO Blog Tab -->
+            <section id="seo" class="tab-content">
+                <div class="generator-layout">
+                    <div class="generator-form card">
+                        <h2><i class="fa-solid fa-magnifying-glass-chart"></i> SEO Blog & Outline</h2>
+                        <div class="form-group">
+                            <label>Main Keyword / Topic</label>
+                            <input type="text" id="seo-keyword" placeholder="e.g., AI Marketing Automation">
+                        </div>
+                        <div class="form-group">
+                            <label>Target Audience</label>
+                            <input type="text" id="seo-audience" placeholder="e.g., Digital Marketers & Agency Owners">
+                        </div>
+                        <button class="btn-primary" onclick="generateContent('seo')">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Generate SEO Outline
+                        </button>
+                    </div>
+                    <div class="generator-result card">
+                        <div class="result-header">
+                            <h3>Generated Output</h3>
+                            <button class="btn-secondary" onclick="copyResult('seo-output')"><i class="fa-solid fa-copy"></i> Copy</button>
+                        </div>
+                        <div id="seo-output" class="output-box placeholder">Your generated SEO outline will appear here...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- History Tab -->
+            <section id="history" class="tab-content">
+                <div class="section-header">
+                    <h2>Saved Marketing Assets</h2>
+                    <p>Review all your previously generated AI content stored locally.</p>
+                </div>
+                <div class="history-controls">
+                    <button class="btn-secondary" onclick="clearHistory()"><i class="fa-solid fa-trash"></i> Clear History</button>
+                </div>
+                <div id="history-list" class="history-list"></div>
+            </section>
+
+            <!-- Admin Approvals Dashboard Tab -->
+            <section id="admin" class="tab-content">
+                <div class="section-header">
+                    <h2>Admin Approval Dashboard</h2>
+                    <p>Manage user registrations and grant system access.</p>
+                </div>
+                <div class="admin-table-container card">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-user-list">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Settings & Account Tab -->
+            <section id="settings" class="tab-content">
+                <div class="section-header">
+                    <h2>Account Settings</h2>
+                    <p>Manage your account preferences and profile data.</p>
+                </div>
+                <div class="card settings-card">
+                    <h3>Profile Information</h3>
+                    <p id="settings-user-email" style="color: var(--text-muted); margin-bottom: 20px;"></p>
+                    
+                    <div class="danger-zone">
+                        <h3>Danger Zone</h3>
+                        <p>Once you delete your account, there is no going back. Please be certain.</p>
+                        <button class="btn-danger" onclick="deleteAccount()"><i class="fa-solid fa-user-xmark"></i> Delete Account</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

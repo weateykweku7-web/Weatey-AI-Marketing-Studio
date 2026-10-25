@@ -1,0 +1,22 @@
+{
+  "name": "weatey-ai-marketing-studio",
+  "version": "1.0.0",
+  "description": "A modern, responsive client-side web application for generating high-converting marketing content across multiple channels.",
+  "main": "script.js",
+  "scripts": {
+    "start": "live-server"
+  },
+  "keywords": [
+    "marketing",
+    "ai",
+    "copywriting",
+    "content-generator",
+    "studio"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}
